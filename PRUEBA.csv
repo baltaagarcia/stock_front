@@ -1,7 +1,8 @@
-id,precio,nombre,cantidad,categoria
+ID,Nombre,Cantidad,Precio,Categoria
 
-1,23,hola,32,1
-1,23,hola,32,1
-1,23,hola,32,1
-1,23,hola,32,1
-1,23,hola,32,1
+1,holA,434,32,1
+2,hola,434,32,1
+3,hola,434,32,1
+4,hola,434,32,1
+5,hola,434,32,1
+6,hola,434,32,1
