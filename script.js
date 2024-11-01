@@ -41,7 +41,7 @@ document
   });
  document
  .getElementById("importar")
- .addEventListener("onchange",importarCSV)
+ .addEventListener("change",importarCSV)
   // Función para importar CSV
 function importarCSV(event) {
     const archivo = event.target.files[0];

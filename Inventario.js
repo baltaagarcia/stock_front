@@ -6,8 +6,8 @@ import Producto from "./producto.js";
 const categoriasMap = {
     0: 'Sin Categoria',
     1: 'Electrónica',
-    2: 'Ropa',
-    3: 'Alimentos'
+    2: 'Alimentos',
+    3: 'Ropa',
 
 }
 
