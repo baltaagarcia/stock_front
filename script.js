@@ -208,6 +208,38 @@ document.body.appendChild(botonExportar);
 
 
 
-function prueba(params) {
-  console.log("hola");
-}
+document.addEventListener('DOMContentLoaded', () => {
+  importarProductosDesdeAPI();
+});
+
+// Tu función para importar productos desde la API
+function importarProductosDesdeAPI() {
+  fetch('http://localhost:3000/') // Cambia la URL por la de tu API
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la red al obtener los productos');
+      }
+      return response.json();
+    })
+    .then(productos => {
+      productos.forEach(producto => {
+        const { id, nombre, cantidad, precio, categoria } = producto;
+
+        // Verificamos que los datos sean válidos antes de agregar
+        if (
+          !isNaN(id) &&
+          !isNaN(cantidad) &&
+          !isNaN(precio) &&
+          cantidad >= 0 &&
+          precio >= 0
+        ) {
+          inventario.agregarProducto(nombre, cantidad, precio, categoria);
+        } else {
+          console.warn(`Datos inválidos para el producto: ${JSON.stringify(producto)}`);
+        }
+      });
+    })
+    .catch(error => {
+      console.error('Hubo un problema con la solicitud:', error);
+    });
+};
