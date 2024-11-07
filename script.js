@@ -34,8 +34,8 @@ document
     }
 
     // Si la validación pasa, agregar el producto
-    inventario.agregarProducto(nombre, cantidad, precio, categoriaId);
-
+    const  producto = inventario.agregarProducto(nombre, cantidad, precio, categoriaId);
+    inventario.agregarProductoAPI(producto)
     // Limpiar campos del formulario
     this.reset();
   });
@@ -87,75 +87,10 @@ function importarCSV(event) {
 
 
 // Función para eliminar un producto (se llama desde el botón)
-/*document.getElementById("")
- .addEventListener("click",eliminarProducto)
-function eliminarProducto(id) {
-  inventario.eliminarProducto(id);
-}*/
+
 
 // Función para editar un producto (se llama desde el botón)
-function editarProducto(id) {
-  const producto = inventario.productos.find((p) => p.id === id);
-  if (producto) {
-    // Llenar el formulario con los datos del producto para editar
-    document.getElementById("nombre").value = producto.nombre;
-    document.getElementById("cantidad").value = producto.cantidad;
-    document.getElementById("precio").value = producto.precio;
 
-    // Cambiar el texto del botón de "Agregar Producto" a "Guardar Cambios"
-    const boton = document.querySelector('button[type="submit"]');
-    boton.textContent = "Guardar Cambios";
-
-    // Cambiar el evento de envío para que guarde los cambios en lugar de agregar un nuevo producto
-    document.getElementById("producto-form").onsubmit = function (e) {
-      e.preventDefault();
-      const nuevoNombre = document.getElementById("nombre").value;
-      const nuevaCantidad = document.getElementById("cantidad").value;
-      const nuevoPrecio = document.getElementById("precio").value;
-
-      // Validación de cantidad y precio
-      if (nuevaCantidad < 0) {
-        mensajeError.textContent = "La cantidad no puede ser negativa.";
-        mensajeError.style.display = "block";
-        return;
-      } else if (nuevoPrecio < 0) {
-        mensajeError.textContent = "El precio no puede ser negativo.";
-        mensajeError.style.display = "block";
-        return;
-      } else {
-        mensajeError.style.display = "none";
-      }
-
-      inventario.editarProducto(id, nuevoNombre, nuevaCantidad, nuevoPrecio);
-
-      // Restaurar el formulario a su estado original
-      this.reset();
-      boton.textContent = "Agregar Producto";
-      this.onsubmit = function (e) {
-        e.preventDefault();
-        const nombre = document.getElementById("nombre").value;
-        const cantidad = document.getElementById("cantidad").value;
-        const precio = document.getElementById("precio").value;
-
-        // Validación de cantidad y precio
-        if (cantidad < 0) {
-          mensajeError.textContent = "La cantidad no puede ser negativa.";
-          mensajeError.style.display = "block";
-          return;
-        } else if (precio < 0) {
-          mensajeError.textContent = "El precio no puede ser negativo.";
-          mensajeError.style.display = "block";
-          return;
-        } else {
-          mensajeError.style.display = "none";
-        }
-
-        inventario.agregarProducto(nombre, cantidad, precio);
-        this.reset();
-      };
-    };
-  }
-}
 
 // Función para exportar a CSV
 function exportarCSV() {
