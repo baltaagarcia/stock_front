@@ -85,10 +85,13 @@ function importarCSV(event) {
     lector.readAsText(archivo);
   }
 
+
 // Función para eliminar un producto (se llama desde el botón)
+/*document.getElementById("")
+ .addEventListener("click",eliminarProducto)
 function eliminarProducto(id) {
   inventario.eliminarProducto(id);
-}
+}*/
 
 // Función para editar un producto (se llama desde el botón)
 function editarProducto(id) {
@@ -151,27 +154,6 @@ function editarProducto(id) {
         this.reset();
       };
     };
-  }
-}
-function filtrarProductos() {
-  const query = document.getElementById("buscar").value.toLowerCase();
-  console.log("Buscando:", query);
-  const tabla = document.getElementById("tabla-productos");
-  const filas = tabla.getElementsByTagName("tr");
-
-  for (let i = 1; i < filas.length; i++) {
-    // Comenzar en 1 para omitir el encabezado
-    const celdas = filas[i].getElementsByTagName("td");
-    let encontrado = false;
-
-    for (let j = 0; j < celdas.length; j++) {
-      if (celdas[j].textContent.toLowerCase().includes(query)) {
-        encontrado = true;
-        break;
-      }
-    }
-
-    filas[i].style.display = encontrado ? "" : "none"; // Mostrar u ocultar la fila
   }
 }
 

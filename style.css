@@ -101,20 +101,20 @@ button:hover {
 }
 
 /* Botones específicos */
-button[onclick^="editarProducto"] {
+.boton-editar {
     background-color: #ffc107;
     color: white;
 }
 
-button[onclick^="eliminarProducto"] {
+.boton-eliminar {
     background-color: #dc3545;
     color: white;
 }
 
-button[onclick^="editarProducto"]:hover {
+.boton-editar:hover {
     background-color: #e0a800;
 }
 
-button[onclick^="eliminarProducto"]:hover {
+.boton-eliminar:hover {
     background-color: #c82333;
 }

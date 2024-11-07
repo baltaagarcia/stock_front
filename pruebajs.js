@@ -11,3 +11,5 @@ fetch('http://localhost:3000/')
   .catch(error => {
     console.error('Hubo un problema con la solicitud:', error);
   });
+
+

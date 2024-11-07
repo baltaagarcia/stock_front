@@ -7,7 +7,11 @@ class Producto {
         this.cantidad = cantidad;
         this.precio = precio;
         this.categoria = categoria;
+
+
     }
+
 }
+
 
 export default Producto
