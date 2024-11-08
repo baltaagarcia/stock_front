@@ -129,7 +129,6 @@ class Inventario {
           mensajeError.style.display = "none";
         }
 
-        this.editarProducto(id, nuevoNombre, nuevaCantidad, nuevoPrecio);
 
         // Restaurar el formulario a su estado original
         this.reset();
