@@ -1,6 +1,6 @@
 import Categoria from "./Categoria.js";
 
-import Producto from "./producto.js";
+import Producto from "./Producto.js";
 
 const categoriasMap = {
   0: "Sin Categoria",
@@ -18,6 +18,14 @@ class Inventario {
     this.idActualCategoria = 0; // Para Asignar un ID unico a cada categoria
   }
 
+  /**
+   * 
+   * @param {string} nombre del producto a agregar
+   * @param {number} cantidad del producto a agregar
+   * @param {*number} precio del  produco a agregar
+   * @param {number} categoria del producto a agregar
+   * @returns un Producto
+   */
   agregarProducto(nombre, cantidad, precio, categoria) {
     const producto = new Producto(
       this.idActualProdcuto++,
@@ -28,9 +36,13 @@ class Inventario {
     );
     this.productos.push(producto);
     this.mostrarProductos();
-   return producto
+    return producto
   }
 
+  /**
+   * 
+   * @param {string} nombre 
+   */
   agregarCategoria(nombre) {
     const categoria = new Categoria(this.idActualCategoria++, nombre);
     this.categorias.push(categoria);
@@ -44,6 +56,9 @@ class Inventario {
     this.eliminarProductoAPI(id);
   }
 
+  /**
+   * muestra los productos mediante una tabla
+   */
   mostrarProductos() {
     const tabla = document.getElementById("tabla-productos");
     tabla.innerHTML = ""; // Limpiar la tabla antes de renderizar
@@ -59,18 +74,15 @@ class Inventario {
                 <td>${producto.nombre}</td>
                 <td>${producto.cantidad}</td>
                 <td>$${producto.precio}</td>
-                <td>${
-                  producto.categoria
-                    ? categoriasMap[producto.categoria]
-                    : "Sin categoria"
-                }</td>
+                <td>${producto.categoria
+          ? categoriasMap[producto.categoria]
+          : "Sin categoria"
+        }</td>
                 <td>
-                    <button class= "boton-editar" id="btn-editar-${
-                      producto.id
-                    }">Editar</button>
-                    <button class= "boton-eliminar" id ="btn-eliminar-${
-                      producto.id
-                    }">Eliminar</button>
+                    <button class= "boton-editar" id="btn-editar-${producto.id
+        }">Editar</button>
+                    <button class= "boton-eliminar" id ="btn-eliminar-${producto.id
+        }">Eliminar</button>
                 </td>
             `;
       tabla.appendChild(fila);
@@ -78,6 +90,10 @@ class Inventario {
     this.agregarFuncionalidades();
   }
 
+  /**
+   * edita el produco a elegir
+   * @param {number} id del producto a editar 
+   */
   editarProducto(id) {
     const producto = this.productos.find((p) => p.id === id);
     console.log(this.productos);
@@ -144,6 +160,9 @@ class Inventario {
       };
     }
   }
+  /**
+   * Muestra las categorias del producto
+   */
   mostrarCategorias() {
     const selectCategorias = document.getElementById("categoria");
     selectCategorias.innerHTML = ""; // Limpiar el select antes de agregar opciones
@@ -155,7 +174,9 @@ class Inventario {
       selectCategorias.appendChild(option);
     });
   }
-
+  /**
+   * Funcionalidades de botones para eliminar y editar
+   */
   agregarFuncionalidades() {
     document.querySelectorAll(".boton-editar").forEach((btnEditar) => {
       btnEditar.addEventListener("click", (e) => {
@@ -170,16 +191,20 @@ class Inventario {
       });
     });
   }
-   agregarProductoAPI = async (producto) => {
+  /**
+   * manda la informacion del producto a agregar
+   * @param {Producto} producto a agregar
+   */
+  agregarProductoAPI = async (producto) => {
     const data = {
-        id: producto.id,
+      id: producto.id,
       nombre: producto.nombre,
       cantidad: producto.cantidad,
       precio: producto.precio,
       categoria: producto.categoria
 
     };
-  
+
     try {
       const response = await fetch('http://localhost:3000/productos', {
         method: 'POST',
@@ -188,27 +213,30 @@ class Inventario {
         },
         body: JSON.stringify(data)
       });
-  
+
       const resultado = await response.json();
       console.log('Producto agregado:', resultado);
     } catch (error) {
       console.error('Error al agregar el producto:', error);
     }
   };
-  
-   eliminarProductoAPI = async (id) => {
+  /**
+   * realiza la solicitud para eliminar producto
+   * @param {number} id del producto a eliminar 
+   */
+  eliminarProductoAPI = async (id) => {
     try {
       const response = await fetch(`http://localhost:3000/productos/${id}`, {
         method: 'DELETE'
       });
-  
+
       const resultado = await response.json();
       console.log('Producto eliminado:', resultado);
     } catch (error) {
       console.error('Error al eliminar el producto:', error);
     }
   };
-  
+
 }
 
 
