@@ -17,10 +17,18 @@ class Inventario {
     this.idActualProdcuto = 1; // Para asignar un ID único a cada producto
     this.idActualCategoria = 0; // Para Asignar un ID unico a cada categoria
   }
-
-  agregarProducto(nombre, cantidad, precio, categoria) {
+/**
+ * 
+ * @param {number} id 
+ * @param {string} nombre 
+ * @param {number} cantidad 
+ * @param {number} precio 
+ * @param {number} categoria 
+ * @returns un Producto
+ */
+  agregarProducto(id,nombre, cantidad, precio, categoria) {
     const producto = new Producto(
-      this.idActualProdcuto++,
+      id,
       nombre,
       cantidad,
       parseFloat(precio).toFixed(2),
@@ -28,31 +36,39 @@ class Inventario {
     );
     this.productos.push(producto);
     this.mostrarProductos();
-   return producto
+    return producto;
   }
-
+/**
+ * agrega una categoria
+ * @param {string} nombre 
+ */
   agregarCategoria(nombre) {
     const categoria = new Categoria(this.idActualCategoria++, nombre);
     this.categorias.push(categoria);
     this.mostrarCategorias();
   }
-
+/**
+ * Elimina un producto
+ * @param {number} id 
+ */
   eliminarProducto(id) {
     // Filtrar el producto con el ID correspondiente
     this.productos = this.productos.filter((producto) => producto.id !== id);
     this.mostrarProductos();
     this.eliminarProductoAPI(id);
   }
-
+/**
+ * Muestra los productos mediante una tabla
+ */
   mostrarProductos() {
     const tabla = document.getElementById("tabla-productos");
-    tabla.innerHTML = ""; // Limpiar la tabla antes de renderizar
+    tabla.innerHTML = ""; 
 
     this.productos.forEach((producto) => {
       const fila = document.createElement("tr");
-      // Resaltar si la cantidad está por debajo de 5
+    
       if (producto.cantidad < 5) {
-        fila.style.backgroundColor = "#f8d7da"; // Color de fondo para bajo stock
+        fila.style.backgroundColor = "#f8d7da"; 
       }
       fila.innerHTML = `
                 <td>${producto.id}</td>
@@ -77,30 +93,34 @@ class Inventario {
     });
     this.agregarFuncionalidades();
   }
-
+/**
+ * edita el producto a elegir
+ * @param {number} id del producto a editar 
+ */
   editarProducto(id) {
     const producto = this.productos.find((p) => p.id === id);
     console.log(this.productos);
-
+  
     if (producto) {
-      // Llenar el formulario con los datos del producto para editar
+
       document.getElementById("nombre").value = producto.nombre;
       document.getElementById("cantidad").value = producto.cantidad;
       document.getElementById("precio").value = producto.precio;
       document.getElementById("categoria").value = producto.categoria;
+  
 
-      // Cambiar el texto del botón de "Agregar Producto" a "Guardar Cambios"
       const boton = document.querySelector('button[type="submit"]');
       boton.textContent = "Guardar Cambios";
+  
 
-      // Cambiar el evento de envío para que guarde los cambios en lugar de agregar un nuevo producto
-      document.getElementById("producto-form").onsubmit = function (e) {
+      document.getElementById("producto-form").onsubmit = async function (e) {
         e.preventDefault();
+  
         const nuevoNombre = document.getElementById("nombre").value;
         const nuevaCantidad = document.getElementById("cantidad").value;
         const nuevoPrecio = document.getElementById("precio").value;
+        const nuevaCategoria = document.getElementById("categoria").value;
 
-        // Validación de cantidad y precio
         if (nuevaCantidad < 0) {
           mensajeError.textContent = "La cantidad no puede ser negativa.";
           mensajeError.style.display = "block";
@@ -112,41 +132,55 @@ class Inventario {
         } else {
           mensajeError.style.display = "none";
         }
+  
 
-        this.editarProducto(id, nuevoNombre, nuevaCantidad, nuevoPrecio);
+        try {
+          await editarProductoAPI(id, {
+            nombre: nuevoNombre,
+            cantidad: nuevaCantidad,
+            precio: nuevoPrecio,
+            categoria: nuevaCategoria,
+          });
+  
+          console.log("Producto editado correctamente en la API");
+  
 
-        // Restaurar el formulario a su estado original
-        this.reset();
-        boton.textContent = "Agregar Producto";
-        this.onsubmit = function (e) {
-          e.preventDefault();
-          const nombre = document.getElementById("nombre").value;
-          const cantidad = document.getElementById("cantidad").value;
-          const precio = document.getElementById("precio").value;
-          const categoria = document.getElementById("categoria").value;
-
-          // Validación de cantidad y precio
-          if (cantidad < 0) {
-            mensajeError.textContent = "La cantidad no puede ser negativa.";
-            mensajeError.style.display = "block";
-            return;
-          } else if (precio < 0) {
-            mensajeError.textContent = "El precio no puede ser negativo.";
-            mensajeError.style.display = "block";
-            return;
-          } else {
-            mensajeError.style.display = "none";
-          }
-
-          inventario.agregarProducto(nombre, cantidad, precio, categoria);
           this.reset();
-        };
+          boton.textContent = "Agregar Producto";
+          this.onsubmit = function (e) {
+            e.preventDefault();
+            const nombre = document.getElementById("nombre").value;
+            const cantidad = document.getElementById("cantidad").value;
+            const precio = document.getElementById("precio").value;
+            const categoria = document.getElementById("categoria").value;
+  
+            if (cantidad < 0) {
+              mensajeError.textContent = "La cantidad no puede ser negativa.";
+              mensajeError.style.display = "block";
+              return;
+            } else if (precio < 0) {
+              mensajeError.textContent = "El precio no puede ser negativo.";
+              mensajeError.style.display = "block";
+              return;
+            } else {
+              mensajeError.style.display = "none";
+            }
+  
+            inventario.agregarProducto(nombre, cantidad, precio, categoria);
+            this.reset();
+          };
+        } catch (error) {
+          console.error("Error al editar el producto en la API:", error);
+        }
       };
     }
-  }
+  };
+  /**
+   * MUESTRA las categorias del producto
+   */
   mostrarCategorias() {
     const selectCategorias = document.getElementById("categoria");
-    selectCategorias.innerHTML = ""; // Limpiar el select antes de agregar opciones
+    selectCategorias.innerHTML = ""; 
 
     this.categorias.forEach((categoria) => {
       const option = document.createElement("option");
@@ -155,57 +189,106 @@ class Inventario {
       selectCategorias.appendChild(option);
     });
   }
-
+/**
+ * Funcionalidades de botones para eliminar y editar
+ */
   agregarFuncionalidades() {
     document.querySelectorAll(".boton-editar").forEach((btnEditar) => {
       btnEditar.addEventListener("click", (e) => {
-        const id = parseInt(e.target.id.split("-").pop()); // Extraer el ID del botón
+        const id = parseInt(e.target.id.split("-").pop()); 
         this.editarProducto(id);
       });
     });
     document.querySelectorAll(".boton-eliminar").forEach((btnEliminar) => {
       btnEliminar.addEventListener("click", (e) => {
-        const id = parseInt(e.target.id.split("-").pop()); // Extraer el ID del botón
+        const id = parseInt(e.target.id.split("-").pop()); 
         this.eliminarProducto(id);
       });
     });
   }
-   agregarProductoAPI = async (producto) => {
+  /**
+   * manda la informacion del producto a agregar
+   * @param {Producto} producto a agregar 
+   * @returns 
+   */
+  agregarProductoAPI = async (producto) => {
+    console.log("Producto a enviar:", producto);
+  
+    if (!producto.nombre || !producto.precio || !producto.cantidad || !producto.categoria) {
+      console.error("Faltan campos necesarios para el producto.");
+      return;
+    }
+  
+    if (isNaN(producto.precio) || isNaN(producto.cantidad)) {
+      console.error("Precio y cantidad deben ser números válidos.");
+      return;
+    }
+  
     const data = {
-        id: producto.id,
       nombre: producto.nombre,
       cantidad: producto.cantidad,
       precio: producto.precio,
-      categoria: producto.categoria
-
+      categoria: producto.categoria,
     };
   
     try {
-      const response = await fetch('http://localhost:3000/productos', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/productos", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
   
-      const resultado = await response.json();
-      console.log('Producto agregado:', resultado);
-    } catch (error) {
-      console.error('Error al agregar el producto:', error);
-    }
-  };
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.statusText}`);
+      }
   
-   eliminarProductoAPI = async (id) => {
+      const resultado = await response.json();
+      console.log("Producto agregado:", resultado);
+      return resultado.id;  
+    } catch (error) {
+      console.error("Error al agregar el producto:", error);
+    }
+};
+
+  
+  /**
+   * Realiza la solicitud para eliminar producto
+   * @param {number} id 
+   */
+  eliminarProductoAPI = async (id) => {
     try {
       const response = await fetch(`http://localhost:3000/productos/${id}`, {
-        method: 'DELETE'
+        method: "DELETE",
+      });
+
+      const resultado = await response.json();
+      console.log("Producto eliminado:", resultado);
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error);
+    }
+  };
+   editarProductoAPI = async (id, productoActualizado) => {
+    try {
+      const response = await fetch(`http://localhost:3000/productos/${id}`, {
+        method: "PUT", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productoActualizado),
       });
   
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.status} ${response.statusText}`);
+      }
+  
       const resultado = await response.json();
-      console.log('Producto eliminado:', resultado);
+      console.log("Producto editado:", resultado);
+      return resultado;
     } catch (error) {
-      console.error('Error al eliminar el producto:', error);
+      console.error("Error al editar el producto:", error);
+      throw error;
     }
   };
   
